@@ -1,86 +1,67 @@
-# With this, we will build a decision tree and display the results using sklearn
+# Ashly DeFalco
+# final project
+# binning
 
+import csv
 import pandas as pd
-import numpy as np
-from sklearn.tree import DecisionTreeClassifier, export_graphviz
-from six import StringIO
-from sklearn.model_selection import train_test_split
-from sklearn import metrics
-from sklearn.preprocessing import LabelEncoder
-from IPython.display import Image as im
-import pydotplus
-from PIL import Image
+file = 'fileData.csv'
 
-# set column names for the dataset so we can access them
-col_names = ['Source Port', 'Destination Port', 'NAT Source Port', 'NAT Destination Port', 'Action', 'Bytes', 'Bytes Sent',
-             'Bytes Received', 'Packets', 'Elapsed Time (sec)', 'pkts_sent', 'pkts_received' ]
+frame = pd.DataFrame()
 
-# Import the dataset as a CSV and set it as a Dataframe
-port_DATA = pd.read_csv("finalData.csv", header=0, names=col_names)
+def raw_data():
+    raw_data = []
+    with open("finalData.csv", "rb") as rawfile:
+        reader = csv.reader(rawfile, delimiter=",")
+        next(reader)
+        for column in reader:
+            raw_data.append(column)
 
-# Some of the values are reading as infinite. Replace with NaN
-port_DATA.replace([np.inf, -np.inf], np.nan, inplace=True)
+    raw_data = pd.DataFrame(raw_data)
+    return raw_data.T
 
-# Drop the Rows with NaN values
-port_DATA.dropna(inplace=True)
+#bin 1: allow
+bin_allow_index=[]
+for i in range (raw_data):
+    if raw_data['Action'].iloc[i] == 'allow':
+        bin_allow_index.append(i)
+bin_allow=[]
+for i in bin_allow_index:
+    bin_allow.append(raw_data.iloc[i])
+bin_allow = pd.DataFreame(bin_allow)
+bin_allow
 
-# instantiate encoder
-lb = LabelEncoder()
+#bin 2: dany
+bin_deny_index=[]
+for i in range (raw_data):
+    if raw_data['Action'].iloc[i] == 'deny':
+        bin_deny_index.append(i)
+bin_deny=[]
+for i in bin_deny_index:
+    bin_deny.append(raw_data.iloc[i])
+bin_deny = pd.DataFreame(bin_deny)
+bin_deny
 
-# make a copy of the dataset
-port_DATA_copy = port_DATA.copy()
+#bin 3: drop
+bin_drop_index=[]
+for i in range (raw_data):
+    if raw_data['Action'].iloc[i] == 'drop':
+        bin_drop_index.append(i)
+bin_drop=[]
+for i in bin_drop_index:
+    bin_drop.append(raw_data.iloc[i])
+bin_drop = pd.DataFreame(bin_drop)
+bin_drop
 
-# set up a list to replace the action categorical values with numerical ones
-replace_list = {'Action': {'allow': 0, 'deny': 1, 'drop': 2, 'reset-both': 3}}
+#bin 4: reset-both
+bin_reset_index=[]
+for i in range (raw_data):
+    if raw_data['Action'].iloc[i] == 'reset':
+        bin_reset_index.append(i)
+bin_reset=[]
+for i in bin_reset_index:
+    bin_reset.append(raw_data.iloc[i])
+bin_reset = pd.DataFreame(bin_reset)
+bin_reset
 
-# replace the values
-port_DATA_copy.replace(replace_list, inplace=True)
-
-# Select our Independent Features
-feature = ['Source Port', 'Destination Port', 'NAT Source Port', 'NAT Destination Port', 'Bytes',
-           'Bytes Sent', 'Bytes Received']
-
-# Set x values to the independent features
-X = port_DATA_copy[feature]
-
-# set y values to the target feature
-Y = port_DATA_copy['Action']
-
-# set up our test and train values with sklearn. Test size will be 30% of the data
-X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.3, random_state=1)
-
-# Set up our Decision Tree Classifier
-tree = DecisionTreeClassifier(criterion="entropy", max_depth=6)
-
-# Fit our training data to the classifier
-tree = tree.fit(X_train, Y_train)
-
-# use the prediction function to make a prediction based on the x test set
-predict = tree.predict(X_test)
-
-# use the y test set with the predictions based off of the x test set to find an accuracy percentage
-print("Accuracy of Test Model: ", metrics.accuracy_score(Y_test, predict))
-
-# now we will display the decision tree
-# create a memory file with stringIO
-display_data = StringIO()
-
-# create a graphic representation of the decision tree for the dataset. we will use display_data to create
-# output file. This will be a dot file
-export_graphviz(tree, out_file=display_data, filled=True, rounded=True, special_characters=True,
-                feature_names=feature)
-
-# convert the dot file over to a graph
-graph = pydotplus.graph_from_dot_data(display_data.getvalue())
-
-# write png to file name
-graph.write_png('ports.png')
-
-# render the decision tree. It will be a .png
-im(graph.create_png())
-
-# open the image file for the decision tree
-img = Image.open('ports.png')
-
-# display the graph
-img.show()
+raw_data=pd.read_csv(file, 'Action')
+print(raw_data)
