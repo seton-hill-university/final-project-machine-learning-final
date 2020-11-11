@@ -1,65 +1,86 @@
-# importing libraries
+# With this, we will build a decision tree and display the results using sklearn
 
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
+from sklearn.tree import DecisionTreeClassifier, export_graphviz
+from six import StringIO
+from sklearn.model_selection import train_test_split
+from sklearn import metrics
+from sklearn.preprocessing import LabelEncoder
+from IPython.display import Image as im
+import pydotplus
+from PIL import Image
 
+# set column names for the dataset so we can access them
+col_names = ['Source Port', 'Destination Port', 'NAT Source Port', 'NAT Destination Port', 'Action', 'Bytes', 'Bytes Sent',
+             'Bytes Received', 'Packets', 'Elapsed Time (sec)', 'pkts_sent', 'pkts_received' ]
 
-df= pd.read_csv ('finalData.csv')
+# Import the dataset as a CSV and set it as a Dataframe
+port_DATA = pd.read_csv("finalData.csv", header=0, names=col_names)
 
+# Some of the values are reading as infinite. Replace with NaN
+port_DATA.replace([np.inf, -np.inf], np.nan, inplace=True)
 
-# I used two different dimentionality reduction.
-# The below one is Random Forest
-# It works with only numeric values
-# This method shows you what feature are more important than the other
-# And you select features based on their weight
-from sklearn.ensemble import RandomForestRegressor
+# Drop the Rows with NaN values
+port_DATA.dropna(inplace=True)
 
-# Dropping action column because it's not numeric variable
-df=df.drop(['Action'], axis=1)
-model = RandomForestRegressor(random_state=1, max_depth=10)
-df=pd.get_dummies(df)
-model.fit(df,df.Bytes)
+# instantiate encoder
+lb = LabelEncoder()
 
-features = df.columns
-importances = model.feature_importances_
-indices = np.argsort(importances)[-9:]  # top 10 features
-plt.title('Feature Importances')
-plt.barh(range(len(indices)), importances[indices], color='b', align='center')
-plt.yticks(range(len(indices)), [features[i] for i in indices])
-plt.xlabel('Relative Importance')
-plt.show()
+# make a copy of the dataset
+port_DATA_copy = port_DATA.copy()
 
-from sklearn.feature_selection import SelectFromModel
-feature = SelectFromModel(model)
-Fit = feature.fit_transform(df, df.Bytes)
-print(Fit)
+# set up a list to replace the action categorical values with numerical ones
+replace_list = {'Action': {'allow': 0, 'deny': 1, 'drop': 2, 'reset-both': 3}}
 
-#After using this graph shows that NAT source port column is the least important.
+# replace the values
+port_DATA_copy.replace(replace_list, inplace=True)
 
+# Select our Independent Features
+feature = ['Source Port', 'Destination Port', 'NAT Source Port', 'NAT Destination Port', 'Bytes',
+           'Bytes Sent', 'Bytes Received']
 
-##########################
-#This is Low Variance Filter method that shows you what features that can be removed and don't impact our dataset a lot.
+# Set x values to the independent features
+X = port_DATA_copy[feature]
 
-n = df.isnull().sum()/len(df)*100
-print(n)
+# set y values to the target feature
+Y = port_DATA_copy['Action']
 
-#calculating variance of all numeric variables.
-m = df.var()
+# set up our test and train values with sklearn. Test size will be 30% of the data
+X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.3, random_state=1)
 
-num = df.var()
-print(num)
+# Set up our Decision Tree Classifier
+tree = DecisionTreeClassifier(criterion="entropy", max_depth=6)
 
-# Due to Variance values of sttributes, I will drop all atributes less than 2 because they have low variance to my dataset.
-#looking on how many columns I have before dropping some of them.
-print(len(df.columns))
-df= df.drop(['Bytes Sent','pkts_sent'], axis=1)
-#Counting columns and see if I was able to drop targeted columns
-print(len(df.columns))
+# Fit our training data to the classifier
+tree = tree.fit(X_train, Y_train)
 
-print(len(df))
+# use the prediction function to make a prediction based on the x test set
+predict = tree.predict(X_test)
 
+# use the y test set with the predictions based off of the x test set to find an accuracy percentage
+print("Accuracy of Test Model: ", metrics.accuracy_score(Y_test, predict))
 
+# now we will display the decision tree
+# create a memory file with stringIO
+display_data = StringIO()
 
+# create a graphic representation of the decision tree for the dataset. we will use display_data to create
+# output file. This will be a dot file
+export_graphviz(tree, out_file=display_data, filled=True, rounded=True, special_characters=True,
+                feature_names=feature)
 
+# convert the dot file over to a graph
+graph = pydotplus.graph_from_dot_data(display_data.getvalue())
 
+# write png to file name
+graph.write_png('ports.png')
+
+# render the decision tree. It will be a .png
+im(graph.create_png())
+
+# open the image file for the decision tree
+img = Image.open('ports.png')
+
+# display the graph
+img.show()
