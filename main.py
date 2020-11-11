@@ -11,7 +11,7 @@ from IPython.display import Image as im
 import pydotplus
 from PIL import Image
 
-# set column names for the dataset
+# set column names for the dataset so we can access them
 col_names = ['Source Port', 'Destination Port', 'NAT Source Port', 'NAT Destination Port', 'Action', 'Bytes', 'Bytes Sent',
              'Bytes Received', 'Packets', 'Elapsed Time (sec)', 'pkts_sent', 'pkts_received' ]
 
