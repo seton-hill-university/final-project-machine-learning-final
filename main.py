@@ -2,66 +2,73 @@
 # final project
 # binning
 
-import csv
 import pandas as pd
-file = 'fileData.csv'
 
+file = pd.read_csv('/Users/germaineuwimpuhwe/PycharmProjects/pythonProject1/pythonProject/Finalproject/finalData.csv')
+print(file)
 frame = pd.DataFrame()
 
-def raw_data():
-    raw_data = []
-    with open("finalData.csv", "rb") as rawfile:
-        reader = csv.reader(rawfile, delimiter=",")
-        next(reader)
-        for column in reader:
-            raw_data.append(column)
+print("All unique values in action column",file['Action'].unique())
+#print(len(file['Action'].unique()))
 
-    raw_data = pd.DataFrame(raw_data)
-    return raw_data.T
-
-#bin 1: allow
+#Bin allow
 bin_allow_index=[]
-for i in range (len(raw_data)):
-    if raw_data['Action'].iloc[i] == 'allow':
+for i in range (len(file)):
+    if file['Action'].iloc[i] == 'allow':
         bin_allow_index.append(i)
+
+
 bin_allow=[]
 for i in bin_allow_index:
-    bin_allow.append(raw_data.iloc[i])
-bin_allow = pd.DataFreame(bin_allow)
-bin_allow
+    bin_allow.append(file.iloc[i])
 
-#bin 2: dany
+bin_allow = pd.DataFrame(bin_allow)
+print("This is a bin for allow action\n",bin_allow)
+
+#Binning Deny
+
 bin_deny_index=[]
-for i in range (len(raw_data)):
-    if raw_data['Action'].iloc[i] == 'deny':
+for i in range (len(file)):
+    if file['Action'].iloc[i] == 'deny':
         bin_deny_index.append(i)
+
 bin_deny=[]
 for i in bin_deny_index:
-    bin_deny.append(raw_data.iloc[i])
-bin_deny = pd.DataFreame(bin_deny)
-bin_deny
+    bin_deny.append(file.iloc[i])
 
-#bin 3: drop
+bin_deny = pd.DataFrame(bin_deny)
+print("This is a bin for deny action\n",bin_deny)
+
+#Bin drop
+
 bin_drop_index=[]
-for i in range (len(raw_data)):
-    if raw_data['Action'].iloc[i] == 'drop':
+for i in range (len(file)):
+    if file['Action'].iloc[i] == 'drop':
         bin_drop_index.append(i)
+
 bin_drop=[]
 for i in bin_drop_index:
-    bin_drop.append(raw_data.iloc[i])
-bin_drop = pd.DataFreame(bin_drop)
-bin_drop
+    bin_drop.append(file.iloc[i])
 
-#bin 4: reset-both
-bin_reset_index=[]
-for i in range (len(raw_data)):
-    if raw_data['Action'].iloc[i] == 'reset':
-        bin_reset_index.append(i)
-bin_reset=[]
-for i in bin_reset_index:
-    bin_reset.append(raw_data.iloc[i])
-bin_reset = pd.DataFreame(bin_reset)
-bin_reset
+bin_drop = pd.DataFrame(bin_drop)
+print("This is a bin for drop action\n",bin_drop)
 
-raw_data=pd.read_csv(file, 'Action')
-print(len(raw_data))
+# Bin reset-both
+bin_reset_both_index=[]
+for i in range (len(file)):
+    if file['Action'].iloc[i] == 'reset-both':
+        bin_reset_both_index.append(i)
+
+bin_reset_both=[]
+for i in bin_reset_both_index:
+    bin_reset_both.append(file.iloc[i])
+
+bin_reset_both = pd.DataFrame(bin_reset_both)
+print("This is a bin for reset-both action\n",bin_reset_both)
+
+
+
+
+
+
+
