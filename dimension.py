@@ -19,7 +19,7 @@ def dim(frame):
 
     features = df.columns
     importances = model.feature_importances_
-    indices = np.argsort(importances)[-9:]  # top 10 features
+    indices = np.argsort(importances)[-10:]  # top 10 features
     plt.title('Feature Importances')
     plt.barh(range(len(indices)), importances[indices], color='b', align='center')
     plt.yticks(range(len(indices)), [features[i] for i in indices])
@@ -34,7 +34,7 @@ def dim(frame):
     # After using this graph shows that NAT source port column is the least important.
 
     ##########################
-    # This is Low Variance Filter method that shows you what features that can be removed and don't impact our dataset a lot.
+    # This is Low Variance Filter methoimpact our dd that shows you what features that can be removed and don't ataset a lot.
 
     n = df.isnull().sum() / len(df) * 100
     print(n)

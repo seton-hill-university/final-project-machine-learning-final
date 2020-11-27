@@ -2,18 +2,18 @@
 import decisiontree
 import entropy
 import dimension
-#import binning
+# import binning
 
 import pandas as pd
 import numpy as np
 import random
-import math
 
 file = 'finalData.csv'
 
+
 def sample():
     # counting lines
-    lines = sum(1 for i in open(file))
+    lines = len(list(file))
     # samplesize 10 x
     size = int(lines * 0.1)
     # Randomly skips rows. Only keep size rows. Keeps the header
@@ -28,6 +28,7 @@ def sample():
     data = pd.read_csv(file, skiprows=skip, header=0, names=col_names)
     return data
 
+
 port_DATA = sample()
 
 # Some of the values are reading as infinite. Replace with NaN
@@ -41,3 +42,5 @@ entropy.ent(port_DATA)
 dimension.dim(port_DATA)
 
 decisiontree.decision_tree(port_DATA)
+
+sample()

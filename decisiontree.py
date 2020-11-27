@@ -1,10 +1,13 @@
 # With this, we will build a decision tree and display the results using sklearn
 
+import confusion
+
 from sklearn.tree import DecisionTreeClassifier, export_graphviz
 from six import StringIO
 from sklearn.model_selection import train_test_split
 from sklearn import metrics
 from sklearn.preprocessing import LabelEncoder
+import matplotlib.pyplot as plt
 from IPython.display import Image as im
 import pydotplus
 from PIL import Image
@@ -26,7 +29,7 @@ def decision_tree(frame):
     port_DATA_copy.replace(replace_list, inplace=True)
 
     # Select our Independent Features
-    feature = ['Packets', 'pkts_received', 'Bytes', 'Bytes Received']
+    feature = ['Source Port', 'Destination Port', 'Packets', 'pkts_received', 'Bytes', 'Bytes Received']
 
     # Set x values to the independent features
     X = port_DATA_copy[feature]
@@ -34,11 +37,11 @@ def decision_tree(frame):
     # set y values to the target feature
     Y = port_DATA_copy['Action']
 
-    # set up our test and train values with sklearn. Test size will be 30% of the data
-    X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.5, random_state=1)
+    # set up our test and train values with sklearn. Test size will be 50% of the data
+    X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.3, random_state=1)
 
     # Set up our Decision Tree Classifier
-    tree = DecisionTreeClassifier(criterion="entropy", max_depth=6)
+    tree = DecisionTreeClassifier(criterion="entropy", max_depth=5)
 
     # Fit our training data to the classifier
     tree = tree.fit(X_train, Y_train)
@@ -50,6 +53,8 @@ def decision_tree(frame):
     print("Accuracy of Test Model: ", metrics.accuracy_score(Y_test, predict))
 
     print_tree(tree, feature)
+
+    confusion.confusionMatrix(Y_test, X_test,  predict)
 
 
 def print_tree(frame, feat):
