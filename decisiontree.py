@@ -54,7 +54,7 @@ def decision_tree(frame):
 
     print_tree(tree, feature)
 
-    confusion.confusionMatrix(Y_test, X_test,  predict)
+    confusion.confusionMatrix(Y_test, predict)
 
 
 def print_tree(frame, feat):
