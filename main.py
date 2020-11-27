@@ -1,74 +1,23 @@
-# Ashly DeFalco
-# final project
-# binning
+# Euclidean distance
 
 import pandas as pd
-
-file = pd.read_csv('/Users/germaineuwimpuhwe/PycharmProjects/pythonProject1/pythonProject/Finalproject/finalData.csv')
-print(file)
-frame = pd.DataFrame()
-
-print("All unique values in action column",file['Action'].unique())
-#print(len(file['Action'].unique()))
-
-#Bin allow
-bin_allow_index=[]
-for i in range (len(file)):
-    if file['Action'].iloc[i] == 'allow':
-        bin_allow_index.append(i)
+import numpy as np
 
 
-bin_allow=[]
-for i in bin_allow_index:
-    bin_allow.append(file.iloc[i])
+df = pd.read_csv("finalData.csv")
 
-bin_allow = pd.DataFrame(bin_allow)
-print("This is a bin for allow action\n",bin_allow)
+# Defining two columns
+# Can use any two columns in the dataset
+Bytes_col = df["Bytes"]
+Packets_col = df["Packets"]
 
-#Binning Deny
+# using zip to perform the Euclidean distance equation on two columns
+dist = np.sqrt(np.sum([(a - b) * (a - b) for a, b in zip(Bytes_col, Packets_col)]))
 
-bin_deny_index=[]
-for i in range (len(file)):
-    if file['Action'].iloc[i] == 'deny':
-        bin_deny_index.append(i)
+print("Bytes Column")
+print(Bytes_col)
 
-bin_deny=[]
-for i in bin_deny_index:
-    bin_deny.append(file.iloc[i])
+print("Packets Column")
+print(Packets_col)
 
-bin_deny = pd.DataFrame(bin_deny)
-print("This is a bin for deny action\n",bin_deny)
-
-#Bin drop
-
-bin_drop_index=[]
-for i in range (len(file)):
-    if file['Action'].iloc[i] == 'drop':
-        bin_drop_index.append(i)
-
-bin_drop=[]
-for i in bin_drop_index:
-    bin_drop.append(file.iloc[i])
-
-bin_drop = pd.DataFrame(bin_drop)
-print("This is a bin for drop action\n",bin_drop)
-
-# Bin reset-both
-bin_reset_both_index=[]
-for i in range (len(file)):
-    if file['Action'].iloc[i] == 'reset-both':
-        bin_reset_both_index.append(i)
-
-bin_reset_both=[]
-for i in bin_reset_both_index:
-    bin_reset_both.append(file.iloc[i])
-
-bin_reset_both = pd.DataFrame(bin_reset_both)
-print("This is a bin for reset-both action\n",bin_reset_both)
-
-
-
-
-
-
-
+print("Euclidean distance between two columns is:", dist)
