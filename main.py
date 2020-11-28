@@ -2,6 +2,7 @@
 import decisiontree
 import entropy
 import dimension
+import euclidean
 # import binning
 
 import pandas as pd
@@ -40,6 +41,8 @@ port_DATA.dropna(inplace=True)
 entropy.ent(port_DATA)
 
 dimension.dim(port_DATA)
+
+euclidean.euc(port_DATA)
 
 decisiontree.decision_tree(port_DATA)
 
