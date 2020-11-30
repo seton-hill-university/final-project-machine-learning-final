@@ -1,13 +1,13 @@
 # With this, we will build a decision tree and display the results using sklearn
 
 import confusion
+import kfold
 
 from sklearn.tree import DecisionTreeClassifier, export_graphviz
 from six import StringIO
 from sklearn.model_selection import train_test_split
 from sklearn import metrics
 from sklearn.preprocessing import LabelEncoder
-import matplotlib.pyplot as plt
 from IPython.display import Image as im
 import pydotplus
 from PIL import Image
@@ -37,7 +37,7 @@ def decision_tree(frame):
     # set y values to the target feature
     Y = port_DATA_copy['Action']
 
-    # set up our test and train values with sklearn. Test size will be 50% of the data
+    # set up our test and train values with sklearn. Test size will be 30% of the data
     X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.3, random_state=1)
 
     # Set up our Decision Tree Classifier
@@ -50,12 +50,22 @@ def decision_tree(frame):
     predict = tree.predict(X_test)
 
     # use the y test set with the predictions based off of the x test set to find an accuracy percentage
-    print("Accuracy of Test Model: ", metrics.accuracy_score(Y_test, predict))
+    print("Accuracy of Split Test Model: ", metrics.accuracy_score(Y_test, predict))
 
     print_tree(tree, feature)
 
     confusion.confusionMatrix(Y_test, predict)
 
+    # Resample to Evaluate the Model
+    x_train, x_test, y_train, y_test = kfold.kfold(port_DATA_copy)
+
+    tree.fit(x_train, y_train)
+
+    pred = tree.predict(x_test)
+
+    print_tree(tree, feature)
+
+    print("Accuracy of KFold Test Model: ", metrics.accuracy_score(y_test, pred))
 
 def print_tree(frame, feat):
     tree = frame

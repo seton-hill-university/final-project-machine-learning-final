@@ -4,10 +4,9 @@
 
 import pandas as pd
 
-def binned():
+def binned(frame):
 
-    file = pd.read_csv('finalData.csv')
-    print(file)
+    file = frame
 
     # print("All unique values in action column", file['Action'].unique())
     # print(len(file['Action'].unique()))

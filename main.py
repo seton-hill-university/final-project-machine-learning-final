@@ -3,7 +3,7 @@ import decisiontree
 import entropy
 import dimension
 import euclidean
-# import binning
+import binning
 
 import pandas as pd
 import numpy as np
@@ -14,9 +14,9 @@ file = 'finalData.csv'
 
 def sample():
     # counting lines
-    lines = len(list(file))
-    # samplesize 10 x
-    size = int(lines * 0.1)
+    lines = sum(1 for i in open(file))
+    # samplesize 20 x
+    size = int(lines * 0.2)
     # Randomly skips rows. Only keep size rows. Keeps the header
     skip = random.sample(range(1, lines), lines - size)
 
@@ -32,11 +32,15 @@ def sample():
 
 port_DATA = sample()
 
+print("length: %s", len(port_DATA))
+
 # Some of the values are reading as infinite. Replace with NaN
 port_DATA.replace([np.inf, -np.inf], np.nan, inplace=True)
 
 # Drop the Rows with NaN values
 port_DATA.dropna(inplace=True)
+
+port_DATA = binning.binned(port_DATA)
 
 entropy.ent(port_DATA)
 
@@ -45,5 +49,3 @@ dimension.dim(port_DATA)
 euclidean.euc(port_DATA)
 
 decisiontree.decision_tree(port_DATA)
-
-sample()
