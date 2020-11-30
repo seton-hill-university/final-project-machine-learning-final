@@ -81,7 +81,7 @@ def print_tree(frame, feat):
     # create a memory file with stringIO
     display_data = StringIO()
 
-    cname = ['allow', 'drop', 'deny', 'reset-both']
+    cname = ['allow', 'deny', 'drop', 'reset-both']
 
     # create a graphic representation of the decision tree for the dataset. we will use display_data to create
     # output file. This will be a dot file

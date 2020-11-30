@@ -46,6 +46,7 @@ entropy.ent(port_DATA)
 
 dimension.dim(port_DATA)
 
+print("Euclidean Distances: \n")
 euclidean.euc(port_DATA)
 
 decisiontree.decision_tree(port_DATA)
