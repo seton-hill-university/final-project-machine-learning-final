@@ -9,24 +9,32 @@ from sklearn.model_selection import KFold, cross_val_score, cross_val_predict
 # Training set for each fold consists of the remaining 90%
 
 def kfold(frame):
-    df = frame
+    df = frame # set frame to variable
 
+    # identify feature list
     dFeature = ['Source Port', 'Destination Port', 'Packets', 'pkts_received', 'Bytes', 'Bytes Received']
 
+    # create an array of the features of the dataframe
     X = np.array(df[dFeature])
 
+    # identify the target feature
     dTarget = ['Action']
 
+    # create an array using the target feature
     Y = np.array(df[dTarget])
 
+    # instantiate KFold module
     fold10 = KFold(n_splits=10)
 
+    # create a training and test x set
     for train_index, test_index in fold10.split(X):
         x_train, x_test = X[train_index], X[test_index]
 
+    # create a training and test y set
     for train_index, test_index in fold10.split(Y):
         y_train, y_test = Y[train_index], Y[test_index]
 
+    # return to decisiontree to evaluate the model
     return x_train, x_test, y_train, y_test
 
     # Fold 1

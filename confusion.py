@@ -13,5 +13,3 @@ def confusionMatrix(y, predict):
     disp = ConfusionMatrixDisplay(confusion_matrix=conMat, display_labels=labels)
     disp = disp.plot(include_values=True) # plot the data
     plt.show() # display the confusion matrix
-
- #   print(classification_report(y_test, p))
